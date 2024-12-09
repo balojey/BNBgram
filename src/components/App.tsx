@@ -1,6 +1,7 @@
 import { useLaunchParams, miniApp, useSignal } from '@telegram-apps/sdk-react';
 import { AppRoot } from '@telegram-apps/telegram-ui';
 import { createHashRouter, RouterProvider } from 'react-router-dom';
+
 import { BNBgramProvider } from '@/context/BNBgramContext';
 
 import { IndexPage } from '@/pages/IndexPage/IndexPage';

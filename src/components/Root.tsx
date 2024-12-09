@@ -1,10 +1,25 @@
 import {PrivyProvider} from '@privy-io/react-auth';
-import { bscTestnet, bsc, opBNB, opBNBTestnet } from 'viem/chains';
+import { bscTestnet, bsc, opBNB } from 'viem/chains';
+import { http, WagmiProvider } from "wagmi";
+import { createConfig } from '@privy-io/wagmi';
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import {SmartWalletsProvider} from '@privy-io/react-auth/smart-wallets';
 
 import { App } from '@/components/App.tsx';
 import { ErrorBoundary } from '@/components/ErrorBoundary.tsx';
 import { publicUrl } from '@/helpers/publicUrl.ts';
 import BNBgramLogo from "./BNBgram_logo_180x90.png"
+
+const wagmiConfig = createConfig({
+  chains: [bscTestnet, bsc, opBNB],
+  transports: {
+    [bscTestnet.id]: http(),
+    [bsc.id]: http(),
+    [opBNB.id]: http(),
+  },
+});
+ 
+const queryClient = new QueryClient();
 
 function ErrorBoundaryError({ error }: { error: unknown }) {
   return (
@@ -28,29 +43,33 @@ export function Root() {
     <ErrorBoundary fallback={ErrorBoundaryError}>
       <PrivyProvider
         appId={import.meta.env.VITE_PRIVY_APP_ID}
-        config={{
-          // Display email and wallet as login methods
-          loginMethods: ['telegram'],
-          // Customize Privy's appearance in your app
-          appearance: {
-            theme: 'light',
-            accentColor: '#676FFF',
-            logo: BNBgramLogo,
-          },
-          // Create embedded wallets for users who don't have a wallet
-          embeddedWallets: {
-            createOnLogin: 'users-without-wallets',
-          },
-          defaultChain: bscTestnet,
-          supportedChains: [
-            bsc,
-            opBNB,
-            opBNBTestnet,
-            bscTestnet,
-          ]
-        }}
+        config={
+          {
+            embeddedWallets: {
+              createOnLogin: 'users-without-wallets',
+            },
+            loginMethods: ["telegram"],
+            appearance: {
+              theme: 'light',
+              accentColor: '#676FFF',
+              logo: BNBgramLogo,
+            },
+            defaultChain: bscTestnet,
+            supportedChains: [
+              bsc,
+              opBNB,
+              bscTestnet,
+            ],
+          }
+        }
       >
-        <App/>
+        <WagmiProvider config={wagmiConfig}>
+          <QueryClientProvider client={queryClient}>
+            <SmartWalletsProvider>
+              <App/>
+            </SmartWalletsProvider>
+          </QueryClientProvider>
+        </WagmiProvider>
       </PrivyProvider>
     </ErrorBoundary>
   );

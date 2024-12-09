@@ -1,14 +1,20 @@
 import { Section, Cell, List, Text, Avatar, Headline, Divider, Button, Input, Select} from '@telegram-apps/telegram-ui';
 import { useLaunchParams } from '@telegram-apps/sdk-react';
 import type { FC } from 'react';
-
+import { useActiveWallet, usePrivy } from '@privy-io/react-auth';
 
 import bnbchainLogo from '../pages/WalletPage/bnbchain-logo.png'
-import profilePicture from '../pages/WalletPage/profile-pic.png';
+import { useBNBgram } from '@/context/BNBgramContext';
 
 
 export const Common: FC = () => {
     const lp = useLaunchParams();
+    // const { embeddedWallet } = useBNBgram()
+    const { wallet } = useActiveWallet()
+
+    const {ready, authenticated, login} = usePrivy();
+    // Disable login when Privy is not ready or the user is already authenticated
+    const disableLogin = !ready || (ready && authenticated);
 
     return (
         <>
@@ -19,6 +25,9 @@ export const Common: FC = () => {
                     alignItems: 'center',
                     padding: '5px',
                 }}>
+                <button disabled={disableLogin} onClick={login}>
+                    Log in
+                </button>
                 <Avatar
                     size={48}
                     src={bnbchainLogo}
@@ -41,13 +50,14 @@ export const Common: FC = () => {
                 }}>
                 <Avatar
                     size={96}
-                    src={profilePicture}
+                    src={lp.initData?.user?.photoUrl}
                     style={{
                         margin: "20px auto"
                     }}
                 ></Avatar>
-                <Text weight='1'>0.3BNB</Text>
+                <Text weight='1'>{"0.3BNB"}</Text>
                 <Text weight='3'>@{lp.initData?.user?.username}</Text>
+                <Text weight='3'>{wallet?.address}</Text>
                 </div>
             </Section>
 

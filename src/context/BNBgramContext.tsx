@@ -1,6 +1,12 @@
 import React, { createContext, useContext, useState, ReactNode, useEffect, useCallback } from 'react';
-import {useWallets} from '@privy-io/react-auth';
+import { useWallets, usePrivy } from '@privy-io/react-auth';
 import { bscTestnet, bsc, opBNB, opBNBTestnet } from 'viem/chains';
+import { createSmartAccountClient } from "permissionless";
+import { toSimpleSmartAccount } from "permissionless/accounts";
+import { createPublicClient, http } from "viem";
+import { sepolia } from "viem/chains";
+import { createPimlicoClient } from "permissionless/clients/pimlico"
+import { entryPoint07Address } from "viem/account-abstraction"
 
 export interface IProductInfo {
     id?: number,
@@ -40,19 +46,12 @@ interface BNBgramProviderProps {
 }
 
 export const BNBgramProvider: React.FC<BNBgramProviderProps> = ({ children }) => {
-
-    const {wallets} = useWallets();
-    const embeddedWallet = wallets.find((wallet) => (wallet.walletClientType === 'privy'));
-    console.log(`Wallets: ${wallets}`);
-    console.log(`embeddedWallet: ${embeddedWallet}`);
-
-    const switchChain = useCallback(async () => {
-        await embeddedWallet?.switchChain(bscTestnet.id);
-    }, [])
-
-    useEffect(() => {
-        switchChain();
-    }, [switchChain])
+    const {user} = usePrivy();
+    const smartWallet = user?.linkedAccounts.find((account) => account.type === 'smart_wallet');
+    console.log(`smartWalletAddress: ${smartWallet?.address}`);
+    // Logs the smart wallet's address
+    console.log(`smartWalletType: ${smartWallet?.type}`);
+    // Logs the smart wallet type (e.g. 'safe', 'kernel', 'light_account', 'biconomy')
 
     return (
         <BNBgramContext.Provider value={{  }}>
@@ -61,7 +60,7 @@ export const BNBgramProvider: React.FC<BNBgramProviderProps> = ({ children }) =>
     );
 };
 
-export const useBNBgramContext = (): BNBgramContextType => {
+export const useBNBgram = (): BNBgramContextType => {
     const context = useContext(BNBgramContext);
     if (!context) {
         throw new Error('useBNBgramContext must be used within a BNBgramProvider');
