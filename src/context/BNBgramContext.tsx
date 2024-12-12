@@ -7,6 +7,8 @@ import { toast } from "react-toastify"
 import { Avatar } from '@radix-ui/themes';
 import { useSmartWallets } from '@privy-io/react-auth/smart-wallets';
 
+type NetworkKey = "bsct" | "mainBsc" | "opbnb";
+
 interface Network {
     label: string;
     icon: ReactNode;
@@ -20,7 +22,7 @@ interface BNBgramContextType {
     getBalance: (chain: Chain) => void;
     verifyAddress: (address: string) => any;
     net: string;
-    handleSetNet: (network: string) => void;
+    handleSetNet: (network: NetworkKey) => void;
     networks: Record<string, Network>;
     currentChain: Chain;
     handleCopyAddress: (address: string | undefined) => void;
@@ -40,8 +42,8 @@ export const BNBgramProvider: React.FC<BNBgramProviderProps> = ({ children }) =>
     const { client } = useSmartWallets()
     const { user } = usePrivy();
     const [receiver, setReceiver] = useState<string>("")
-    const [net, setNet] = React.useState<string>("bsct");
-    const networks = {
+    const [net, setNet] = React.useState<NetworkKey>("bsct");
+    const networks: Record<NetworkKey, Network> = {
         bsct: {
             label: "Binance Smart Chain Testnet",
             icon: <Avatar
@@ -104,7 +106,7 @@ export const BNBgramProvider: React.FC<BNBgramProviderProps> = ({ children }) =>
         setReceiver(e.target.value)
     }
 
-    const handleSetNet = async (network: string) => {
+    const handleSetNet = async (network: NetworkKey) => {
         setNet(network)
 
         if (net === "bsct") setCurrentChain(bscTestnet);
