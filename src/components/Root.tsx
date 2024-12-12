@@ -5,7 +5,7 @@ import { createConfig } from '@privy-io/wagmi';
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import {SmartWalletsProvider} from '@privy-io/react-auth/smart-wallets';
 
-import { Theme, ThemePanel } from "@radix-ui/themes";
+import { Theme } from "@radix-ui/themes";
 
 import { App } from '@/components/App.tsx';
 import { ErrorBoundary } from '@/components/ErrorBoundary.tsx';
@@ -74,7 +74,6 @@ export function Root() {
           </WagmiProvider>
         </PrivyProvider>
       </ErrorBoundary>
-      {/* <ThemePanel /> */}
     </Theme>
   );
 }
