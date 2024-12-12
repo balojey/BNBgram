@@ -74,7 +74,7 @@ export function Root() {
           </WagmiProvider>
         </PrivyProvider>
       </ErrorBoundary>
-      <ThemePanel />
+      {/* <ThemePanel /> */}
     </Theme>
   );
 }
