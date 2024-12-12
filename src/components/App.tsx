@@ -1,13 +1,15 @@
 import { useLaunchParams, miniApp, useSignal } from '@telegram-apps/sdk-react';
 import { AppRoot } from '@telegram-apps/telegram-ui';
 import { createHashRouter, RouterProvider } from 'react-router-dom';
+import { ToastContainer, Slide } from 'react-toastify';
 
 import { BNBgramProvider } from '@/context/BNBgramContext';
 
 import { IndexPage } from '@/pages/IndexPage/IndexPage';
 import { WalletPage } from '@/pages/WalletPage/WalletPage';
 import { DappsPage } from '@/pages/DappsPage/DappsPage';
-import { TransferPage } from '@/pages/TransferPage/TransferPage';
+import { TransferTokensSubPage } from '@/pages/WalletPage/TransferTokensSubPage';
+import { TransactionHistorySubPage } from '@/pages/WalletPage/TransactionHistorySubPage';
 
 export function App() {
   const lp = useLaunchParams();
@@ -18,20 +20,27 @@ export function App() {
       element: <IndexPage />,
       children: [
         {
+          path: "/", // Parent route for WalletPage
           element: <WalletPage />,
-          index: true,
+          children: [
+            {
+              index: true, // This is the index route (default child)
+              element: <TransferTokensSubPage />
+            },
+            {
+              path: "history", // Nested child route
+              element: <TransactionHistorySubPage />
+            }
+          ]
         },
         {
-          element: <TransferPage />,
-          path: "/transfer",
-        },
-        {
+          path: "/dapps", // Separate route for DappsPage
           element: <DappsPage />,
-          path: "/dapps",
         }
       ]
     }
-  ])
+  ]);
+  
 
   return (
     <AppRoot
@@ -40,6 +49,13 @@ export function App() {
     >
       <BNBgramProvider>
         <RouterProvider router={router} />
+        <ToastContainer
+          transition={Slide}
+          theme='dark'
+          autoClose={3000}
+          position='top-center'
+          newestOnTop={true}
+        />
       </BNBgramProvider>
     </AppRoot>
   );

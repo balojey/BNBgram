@@ -16,6 +16,8 @@
   "dependencies": {
     "@privy-io/react-auth": "^1.96.1",
     "@privy-io/wagmi": "^0.2.12",
+    "@radix-ui/react-icons": "^1.3.2",
+    "@radix-ui/themes": "^3.1.6",
     "@tanstack/react-query": "^5.62.3",
     "@telegram-apps/sdk-react": "^2.0.10",
     "@telegram-apps/telegram-ui": "^2.1.5",
@@ -24,6 +26,7 @@
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-router-dom": "^6.23.0",
+    "react-toastify": "^10.0.6",
     "viem": "^2.21.54",
     "wagmi": "^2.13.4"
   },

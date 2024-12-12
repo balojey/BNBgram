@@ -5,9 +5,10 @@ import { createConfig } from '@privy-io/wagmi';
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import {SmartWalletsProvider} from '@privy-io/react-auth/smart-wallets';
 
+import { Theme, ThemePanel } from "@radix-ui/themes";
+
 import { App } from '@/components/App.tsx';
 import { ErrorBoundary } from '@/components/ErrorBoundary.tsx';
-import { publicUrl } from '@/helpers/publicUrl.ts';
 import BNBgramLogo from "./BNBgram_logo_180x90.png"
 
 const wagmiConfig = createConfig({
@@ -40,37 +41,40 @@ function ErrorBoundaryError({ error }: { error: unknown }) {
 
 export function Root() {
   return (
-    <ErrorBoundary fallback={ErrorBoundaryError}>
-      <PrivyProvider
-        appId={import.meta.env.VITE_PRIVY_APP_ID}
-        config={
-          {
-            embeddedWallets: {
-              createOnLogin: 'users-without-wallets',
-            },
-            loginMethods: ["telegram"],
-            appearance: {
-              theme: 'light',
-              accentColor: '#676FFF',
-              logo: BNBgramLogo,
-            },
-            defaultChain: bscTestnet,
-            supportedChains: [
-              bsc,
-              opBNB,
-              bscTestnet,
-            ],
+    <Theme accentColor="amber" radius="none" appearance='dark'>
+      <ErrorBoundary fallback={ErrorBoundaryError}>
+        <PrivyProvider
+          appId={import.meta.env.VITE_PRIVY_APP_ID}
+          config={
+            {
+              embeddedWallets: {
+                createOnLogin: 'users-without-wallets',
+              },
+              loginMethods: ["telegram"],
+              appearance: {
+                theme: 'light',
+                accentColor: '#676FFF',
+                logo: BNBgramLogo,
+              },
+              defaultChain: bscTestnet,
+              supportedChains: [
+                bsc,
+                opBNB,
+                bscTestnet,
+              ],
+            }
           }
-        }
-      >
-        <WagmiProvider config={wagmiConfig}>
-          <QueryClientProvider client={queryClient}>
-            <SmartWalletsProvider>
-              <App/>
-            </SmartWalletsProvider>
-          </QueryClientProvider>
-        </WagmiProvider>
-      </PrivyProvider>
-    </ErrorBoundary>
+        >
+          <WagmiProvider config={wagmiConfig}>
+            <QueryClientProvider client={queryClient}>
+              <SmartWalletsProvider>
+                <App/>
+              </SmartWalletsProvider>
+            </QueryClientProvider>
+          </WagmiProvider>
+        </PrivyProvider>
+      </ErrorBoundary>
+      <ThemePanel />
+    </Theme>
   );
 }
